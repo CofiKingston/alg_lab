@@ -1,0 +1,132 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Osoba {
+	char ime[10];
+	char prezime[10];
+	int godine;
+	struct Osoba *next;
+	struct Osoba *prev;
+};
+
+int Insert(struct Osoba *head); //f-ja koja dodaje na pocetak
+int InsertAfter(struct Osoba *head); //f-ja koja dodaje na kraj
+int InsertAfterPerson(struct Osoba *head); //f-ja koja dodaje iza neke osobe na temelju godina
+int Ispis(struct Osoba *head); //f-ja za ispis
+int DeleteElement(struct Osoba *head);
+int IspisCijeli(struct Osoba *head); //f-ja za ispis
+
+
+int main()
+{
+	struct Osoba head;
+	struct Osoba prev;
+	head.next = NULL;
+
+	Insert(&head);
+
+	InsertAfter(&head);
+	InsertAfter(&head);
+	InsertAfter(&head);
+
+
+	InsertAfterPerson(&head);
+
+	DeleteElement(&head);
+
+	IspisCijeli(head.next);
+
+	return 0;
+}
+
+int IspisCijeli(struct Osoba *head)
+{
+	while (head != NULL)
+	{
+		printf("%s %s %d\n", head->ime, head->prezime, head->godine);
+		head = head->next;
+	}
+
+	return 0;
+}
+
+
+int DeleteElement(struct Osoba *head)
+{
+	while (head != NULL && head->godine != 24)
+	{
+		head = head->next;
+	}
+
+	head->prev->next = head->next;
+	head->next->prev = head->prev;
+	Ispis(head->next);
+
+	free(head);
+
+	return 0;
+}
+
+
+int InsertAfterPerson(struct Osoba *head)
+{
+	while (head != NULL && head->godine != 24)
+	{
+		head = head->next;
+	}
+
+	Insert(head);
+
+	return 0;
+}
+
+int Ispis(struct Osoba *head)
+{
+	{
+		printf("\n\n");
+		printf("PREV: %s %s %d\n", head->prev->ime, head->prev->prezime, head->prev->godine);
+		printf("%s %s %d\n", head->ime, head->prezime, head->godine);
+		printf("\n\n");
+	}
+}
+
+int InsertAfter(struct Osoba *head)
+{
+	while (head->next != NULL)
+	{
+		//prev = head;
+		head = head->next;
+		//head->prev = prev;
+	}
+
+	Insert(head);
+
+	return 0;
+}
+
+int Insert(struct Osoba *head)
+{
+	struct Osoba *q = (struct Osoba*) malloc(sizeof(struct Osoba));
+
+	printf("Unesi ime, prezime i godine\n");
+	scanf("%s %s %d", q->ime, q->prezime, &q->godine);
+
+	if (head->next == NULL) //ako je lista prazna
+	{
+		q->prev = head;
+		q->next = head->next;
+		head->next = q;
+	}
+	else //ako njoj vec ima nešto
+	{
+		q->prev = head;
+		q->next = head->next;
+		head->next = q;
+		q->next->prev = q;
+	}
+
+
+	Ispis(q);
+	return 0;
+}
